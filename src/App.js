@@ -1,9 +1,12 @@
 import {useState} from 'react'
 import './App.css';
+import AddTask from './components/AddTask';
 import Header from './components/Header';
 import Tasks from './components/Tasks';
 
 const App = () => {
+
+  const [showAddTask,setShowAddTask] = useState(true)
 
   const [tasks, setTasks] = useState([
       {
@@ -26,14 +29,29 @@ const App = () => {
       }
   ])
 
+  //DeleteTask
   const deleteTask = (id) =>{
     setTasks(tasks.filter(task => task.id !== id))
   }
 
+  const toggleRemainder = (id) =>{
+    setTasks(
+      tasks.map((task) =>
+      task.id === id ? {...task,remainder:!task.remainder}:task)
+    )
+  }
+  //AddTask
+  const addTask = (task) =>{
+    const id = Math.floor(Math.random() * 10000) + 1;
+    const newTask = {id,...task}
+    setTasks([...tasks,newTask])
+  }
+
   return (
     <div className="container">
-    <Header title="Task Tracker"/>
-    {tasks.length >0 ?<Tasks  tasks={tasks} OnDelete={deleteTask}/>:'No Task in Last  '}
+    <Header title="Task Tracker" onAdd={()=>setShowAddTask(!showAddTask)}/>
+    {showAddTask && <AddTask onAdd={addTask}/>}
+    {tasks.length >0 ?<Tasks  tasks={tasks} OnDelete={deleteTask} onToggle={toggleRemainder}/>:'No Task in Last  '}
     </div>
   );
 }
